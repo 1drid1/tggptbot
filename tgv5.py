@@ -1,13 +1,15 @@
 import telegram
-from telegram.ext import CommandHandler, MessageHandler, filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import openai
 
 # Устанавливаем токен бота и API ключ модели ChatGPT
 BOT_TOKEN = 'YOUR_BOT_TOKEN'
 openai.api_key = 'YOUR_API_KEY'
 
+updater = Updater(token=BOT_TOKEN, use_context=True)
 # Функция для генерации ответа на сообщение пользователя
 def generate_reply(text):
+
     prompt = f"User: {text}\nChatGPT: "
     response = openai.Completion.create(engine="gps-3.5-turbo", prompt=prompt, max_tokens=1024, n=1, stop=None, temperature=0.7)
     message = response.choices[0].text.strip()
@@ -28,7 +30,7 @@ bot = telegram.Bot(token=BOT_TOKEN)
 
 # Создаем обработчики команд и сообщений
 start_handler = CommandHandler('start', start)
-message_handler = MessageHandler(filters.Text & ~filters.Command, message)
+message_handler = MessageHandler(Filters.text & (~Filters.command), message)
 
 # Добавляем обработчики команд и сообщений в диспетчер
 dispatcher = updater.dispatcher
